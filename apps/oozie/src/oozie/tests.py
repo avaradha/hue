@@ -23,6 +23,7 @@ import os
 import StringIO
 import shutil
 import tempfile
+import urllib
 import zipfile
 from datetime import datetime
 
@@ -35,6 +36,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 from desktop.lib.django_test_util import make_logged_in_client
+from desktop.lib.paths import SAFE_CHARACTERS_URI_COMPONENTS
 from desktop.lib.test_utils import grant_access, add_permission, add_to_group, reformat_json, reformat_xml
 from desktop.models import Document, Document2
 import desktop.views as views
@@ -3570,7 +3572,7 @@ class TestDashboard(OozieMockBase):
 
     # Rerun
     response = self.c.get(reverse('oozie:rerun_oozie_job', kwargs={'job_id': MockOozieApi.WORKFLOW_IDS[0],
-                                                                   'app_path': MockOozieApi.JSON_WORKFLOW_LIST[0]['appPath']}))
+                                                                   'app_path': urllib.quote(MockOozieApi.JSON_WORKFLOW_LIST[0]['appPath'], safe=SAFE_CHARACTERS_URI_COMPONENTS)}))
     assert_false('Permission denied.' in response.content, response.content)
 
     # Login as someone else
@@ -3582,7 +3584,7 @@ class TestDashboard(OozieMockBase):
 
     # Rerun
     response = client_not_me.get(reverse('oozie:rerun_oozie_job', kwargs={'job_id': MockOozieApi.WORKFLOW_IDS[0],
-                                                                          'app_path': MockOozieApi.JSON_WORKFLOW_LIST[0]['appPath']}))
+                                                                          'app_path': urllib.quote(MockOozieApi.JSON_WORKFLOW_LIST[0]['appPath'], safe=SAFE_CHARACTERS_URI_COMPONENTS)}))
     assert_true('Permission denied.' in response.content, response.content)
 
     # Add read only access
@@ -3593,7 +3595,7 @@ class TestDashboard(OozieMockBase):
 
     # Rerun
     response = client_not_me.get(reverse('oozie:rerun_oozie_job', kwargs={'job_id': MockOozieApi.WORKFLOW_IDS[0],
-                                                                          'app_path': MockOozieApi.JSON_WORKFLOW_LIST[0]['appPath']}))
+                                                                          'app_path': urllib.quote(MockOozieApi.JSON_WORKFLOW_LIST[0]['appPath'], safe=SAFE_CHARACTERS_URI_COMPONENTS) }))
     assert_true('Permission denied.' in response.content, response.content)
 
   def test_workflow_permissions(self):
