@@ -24,6 +24,8 @@ mkdir -p $HUE_BUILD_DIR
 docker pull $BASEDOCKER
 docker tag $BASEDOCKER $BASEIMAGE
 
+cd $WEBAPP_DIR
+
 docker run -it -v $HUE_LOCAL_SRC:$HUE_DOCKER_SRC -v $HUE_BUILD_DIR:$HUE_DOCKER_DEPLOY_DIR $BASEDOCKER bash -c "cd /hue; PREFIX=$HUE_DOCKER_DEPLOY_DIR make install"
 docker run -it -v $HUE_LOCAL_SRC:$HUE_DOCKER_SRC -v $HUE_BUILD_DIR:$HUE_DOCKER_DEPLOY_DIR $BASEDOCKER bash -c "cd $HUE_DOCKER_DEPLOY_DIR/hue; $HUE_DOCKER_DEPLOY_DIR/hue/build/env/bin/hue collectstatic --noinput"
 docker run -it -v $HUE_LOCAL_SRC:$HUE_DOCKER_SRC -v $HUE_BUILD_DIR:$HUE_DOCKER_DEPLOY_DIR $BASEDOCKER bash -c "cd $HUE_DOCKER_DEPLOY_DIR/hue; $HUE_DOCKER_DEPLOY_DIR/hue/build/env/bin/pip install psycopg2-binary"
